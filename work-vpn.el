@@ -1,3 +1,6 @@
+(setq work-vpn-connected-p nil)
+
+
 (defun work-vpn-setup ()
   (with-current-buffer "*work-vpn*"
     (use-local-map
@@ -23,7 +26,8 @@
              file server)
      "*work-vpn*"))
   (work-vpn-setup)
-  (message "Connected 🙉"))
+  (message "Connected 🙉")
+  (setq work-vpn-connected-p t))
 
 
 (defun work-vpn-disconnect ()
@@ -35,4 +39,15 @@
       (sit-for 2)))
   (async-shell-command "vpncli.exe disconnect" "*work-vpn*")
   (sit-for 2)
-  (message "Disconnected 🙈"))
+  (message "Disconnected 🙈")
+  (setq work-vpn-connected-p nil))
+
+
+(defun work-vpn ()
+  (interactive)
+  (if work-vpn-connected-p
+      (work-vpn-disconnect)
+    (work-vpn-connect)))
+
+
+(keymap-global-set "C-c k" 'work-vpn)
